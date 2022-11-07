@@ -15,7 +15,7 @@ app.post("/sign-up", (req, res) => {
 	const { username, avatar } = req.body
 
 	if(!username || !avatar){
-		return res.status(409).send("Todos os campos são obrigatórios")
+		return res.sendStatus(400).send("Todos os campos são obrigatórios")
 	}
 
 	users.push({
@@ -23,7 +23,7 @@ app.post("/sign-up", (req, res) => {
 		avatar
 	})
 
-	res.send("OK")
+	res.status(201).send("OK")
 })
 
 app.post("/tweets", (req, res) => {
@@ -32,18 +32,29 @@ app.post("/tweets", (req, res) => {
 
 	const user = users.find(user => user.username === username)
 
+	if(!username || !tweet){
+		return res.status(400).send("Todos os campos são obrigatórios")
+	}
+
 	tweets.push({
 		username,
 		avatar: user.avatar,
 		tweet
 	})
 
-	res.send("OK")
+	res.status(201).send("OK")
 })
 
 app.get("/tweets", (req, res) => {
 	res.send(tweets.slice(-10))
 })
 
+app.get("/tweets/:USERNAME", (req, res) => {
+	const username = req.params.USERNAME
+
+	const tweetsFiltrados = tweets.filter((tweet) => tweet.username === username)
+
+	res.send(tweetsFiltrados)
+})
 
 app.listen(5000, console.log("Running in port 5000"))
